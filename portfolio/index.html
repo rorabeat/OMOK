@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - My Work</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <a href="#home">Do it</a>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#projects" class="nav-link">Projects</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">안녕하세요,<br>오창주입니다</h1>
+                <p class="hero-subtitle">창의적인 디자인과 효율적인 코드로<br>사용자 경험을 개선합니다</p>
+                <a href="#projects" class="btn-hero">프로젝트 보기</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Projects</h2>
+                <p class="section-subtitle">최근 작업한 프로젝트들을 소개합니다</p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <a href="#" class="project-link" target="_blank">프로젝트 보기</a>
+                        </div>
+                        <div class="image-placeholder">
+                            <span>Project 1</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">Todo 앱</h3>
+                        <p class="project-description">
+                            매일 해야 할 일을 효율적으로 관리할 수 있는 Todo 앱입니다. 
+                            예정과 완료 목록을 분리하여 관리하며, 로컬 스토리지를 통해 데이터를 저장합니다.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <a href="#" class="project-link" target="_blank">프로젝트 보기</a>
+                        </div>
+                        <div class="image-placeholder">
+                            <span>Project 2</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">날씨 웹 앱</h3>
+                        <p class="project-description">
+                            실시간 날씨 정보를 제공하는 반응형 웹 애플리케이션입니다. 
+                            사용자의 위치를 기반으로 현재 날씨와 예보를 표시합니다.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">API</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-image">
+                        <div class="project-overlay">
+                            <a href="#" class="project-link" target="_blank">프로젝트 보기</a>
+                        </div>
+                        <div class="image-placeholder">
+                            <span>Project 3</span>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">포트폴리오 웹사이트</h3>
+                        <p class="project-description">
+                            모던하고 세련된 디자인의 개인 포트폴리오 웹사이트입니다. 
+                            반응형 디자인으로 다양한 디바이스에서 최적의 경험을 제공합니다.
+                        </p>
+                        <div class="project-tags">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contact</h2>
+                <p class="section-subtitle">프로젝트나 협업에 대해 이야기하고 싶으시다면 연락주세요</p>
+            </div>
+            <div class="contact-wrapper">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">이름</label>
+                        <input type="text" id="name" name="name" required placeholder="이름을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">제목</label>
+                        <input type="text" id="subject" name="subject" required placeholder="제목을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">메시지</label>
+                        <textarea id="message" name="message" rows="6" required placeholder="메시지를 입력하세요"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">전송하기</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
