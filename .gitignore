@@ -1,0 +1,8 @@
+*
+!/.gitignore
+!/compare/
+!/compare/**
+
+__pycache__/
+*.py[cod]
+/compare/__pycache__/
