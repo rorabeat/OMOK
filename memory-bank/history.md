@@ -1,0 +1,121 @@
+# 개발 히스토리
+
+---
+
+## 2026-05-08
+
+---
+
+### [USER]
+design_document.md 을 보고 오목 게임을 위한 스펙을 리뷰해줘
+
+### [AI 요약]
+design_document.md를 확인한 결과 게임 개요와 핵심기능 2개 항목만 작성된 최소 상태였음.
+승리 조건, 금수 규칙, 보드 스펙, UI/UX 흐름, 기술 스택 5개 영역이 누락되어 있다고 지적.
+스펙 보완 또는 바로 구현 시작 여부를 사용자에게 확인 요청.
+
+---
+
+### [USER]
+스펙 문서를 보완해줘 그리고 인간대 ai 가 대결하는 게임으로 수정해줘
+
+### [AI 요약]
+design_document.md를 전면 보완. 주요 변경 및 추가 내용:
+- 게임 모드를 인간 대 AI로 변경 (AI = 백, 후공)
+- 게임 규칙: 15×15 보드, 정확히 5목 승리, 렌주 룰 금수(33·44·장목) 적용
+- AI 난이도 3단계(쉬움/보통/어려움), 보통 이상은 미니맥스 알고리즘
+- UI/UX: 난이도 선택 모달, 상태 바, 무르기/재시작, 결과 모달 정의
+- 기술 스택: Vanilla JS + Canvas API, 외부 라이브러리 없음
+- 파일 구조: main / board / rules / ai 4개 파일 분리안 제시
+
+---
+
+### [USER]
+이 오목 게임을 만들기위한 기술 스택을 AGENTS.md 파일에 만들어줘. html, css, 자바스크립트를 사용하고 리액트 컴포넌트를 이용해 구동해야해. 유지보수가 가능하도록 개발 구조에 대한 규칙을 작성해줘.
+내가 작성한 프롬프트를 그대로 history.md 파일에 추가하고 ai 가 답변한 내용을 요약해서 그 밑에 누적해서 표시해줘 나중에 어떻게 했는지 알 수있도록
+
+### [AI 요약]
+AGENTS.md 신규 생성. HTML5 + CSS3 + JavaScript(ES6+) + React 18 + Vite 스택으로 확정.
+컴포넌트 구조(App/Board/Cell/Modal), 커스텀 훅(useGame/useAI), 순수 로직(rules/ai) 분리 구조 정의.
+단일 책임 원칙, Props/State 규칙, 순수 함수 규칙, 네이밍 규칙, 스타일 규칙, AI 모듈 규칙 등 유지보수 가이드라인 작성.
+history.md 신규 생성하여 프롬프트-응답 누적 기록 시작.
+
+---
+
+### [USER]
+design-document.md 파일을 읽고 구체적인 구현 계획을 implementation-plan.md 파일에 작성해줘
+
+### [AI 요약]
+design_document.md와 AGENTS.md를 참고하여 implementation-plan.md 신규 생성.
+7개 Phase로 구분한 전체 구현 계획 작성:
+- Phase 1: Vite + React 18 프로젝트 초기 세팅, 디렉터리 골격 구성
+- Phase 2: config.js 상수 정의 및 rules.js 순수 함수 구현 (checkWinner, isForbidden 등)
+- Phase 3: ai.js 미니맥스 + 알파-베타 가지치기 구현, 난이도별 점수 테이블 정의
+- Phase 4: useGame.js / useAI.js 커스텀 훅 구현, 상태 흐름 및 AI 비동기 처리
+- Phase 5: Board / Cell / StatusBar / DifficultyModal / ResultModal 컴포넌트 구현
+- Phase 6: CSS 변수 기반 스타일링, 반응형 모바일 대응
+- Phase 7: 통합 테스트 체크리스트 (게임 흐름, 금수, AI, UI 전체 검증)
+구현 순서는 config → rules → ai → hooks → components 의존 관계 순으로 정의.
+
+---
+
+### [USER]
+memory-bank 디렉토리 내 모든 문서를 읽고, 구현 계획의 phase1 단계만 진행해줘 진행한 다음에는 progress.md 파일을 열어 향후 개발자들을 위해 수행한 작업을 문서화 해줘. 그런다음 각 파일의 역할을 설명하기 위해 architechure.md 파일에 아키텍쳐 관련 통찰력을 추가해줘
+
+### [AI 요약]
+memory-bank 전체 문서 검토 후 Phase 1 완료 (2026-05-09).
+수행 작업:
+- `npm create vite@latest omok -- --template react` 실행, Vite 8 + React 18 프로젝트 생성
+- `npm install` 완료 (136 packages)
+- 보일러플레이트 제거: `src/App.css`, `src/assets/` 삭제, `App.jsx` / `index.css` 초기화
+- 4개 디렉터리 생성: `src/components/`, `src/hooks/`, `src/logic/`, `src/constants/`
+- placeholder 파일 15개 생성 (각 Phase에서 구현 예정)
+- `npm run build` 성공 확인 (빌드 오류 0건)
+progress.md 신규 생성: Phase 1 완료 내역, Phase 2 다음 작업자 가이드, 각 Phase 미완료 현황 기록.
+architecture.md 신규 생성: 4개 레이어 구조(UI/Hook/Logic/Constants), 각 파일의 역할과 설계 근거, 데이터 흐름 다이어그램, 상태 설계 근거, 향후 확장 주의사항 작성.
+
+---
+
+### [USER]
+phase 2 진행해줘
+
+### [AI 요약]
+Phase 2 완료 (2026-05-09). 구현 내용:
+- `src/constants/config.js`: BOARD_SIZE(15), WIN_COUNT(5), STONE, DIFFICULTY, AI_DEPTH, AI_DELAY_MS 상수 정의 (Object.freeze 적용)
+- `src/logic/rules.js`: 순수 함수 7종 구현
+  - createBoard, countDirection, countLine (내부 헬퍼)
+  - checkWinner: 4방향 5목 감지, 이긴 좌표 5개 반환
+  - isForbidden: 장목→44→33 순서 금수 판별 (흑 전용)
+  - getForbiddenCells: 전체 금수 위치 배열 반환
+  - isBoardFull: 무승부 판단
+- Node.js 검증: 17개 테스트 전체 통과 (초기 hasGappedOpenThree 재귀 버그 수정 포함)
+- npm run build 성공
+- progress.md Phase 2 완료 내역 업데이트, Phase 3 가이드 추가
+
+---
+
+### [USER]
+phase 3 진행해줘
+
+### [AI 요약]
+Phase 3 완료 (2026-05-09). `src/logic/ai.js` 구현:
+- getCandidateCells: 기존 돌 주변 2칸 이내 빈 교차점 추출 (빈 보드 → 중앙 반환)
+- scorePattern: 5목=100k, 열린4=10k, 반열린4=1k, 열린3=500, 반열린3=100, 열린2=10
+- evaluateBoard: WHITE 관점 보드 평가, 방어 가중치 1.1× 적용, 중앙 근접 보너스
+- getBestMoveEasy: 즉시 승리 → 즉시 차단 → 랜덤 순서
+- minimax + 알파-베타: 내부 노드당 MAX_CANDIDATES_PER_NODE=10 제한으로 탐색 폭발 방지
+- getBestMove: 공개 API, 난이도별 분기, board 깊은 복사 후 탐색
+초기 HARD 깊이5 무제한 탐색이 30초+ 걸리는 버그 발견 → 노드당 후보 10개 제한으로 ~4초 이내로 개선.
+Node.js 검증 23개 테스트 전체 통과, npm run build 성공.
+
+---
+
+### [USER]
+phase 4 진행해줘
+
+### [AI 요약]
+Phase 4 완료 (2026-05-09). 구현 내용:
+- `src/hooks/useGame.js`: 게임 전체 상태 머신. board/turn/gameStatus/winner/winCells/history/forbiddenCells/lastMove/isAIThinking 관리. placeStone(금수·턴·중복 검증), placeStoneByAI, undoMove(2수 복원), restartGame, changeDifficulty, selectDifficulty 제공. 모든 setState를 함수형 업데이트로 작성해 비동기 stale state 방지.
+- `src/hooks/useAI.js`: turn==='white' 감지 → 0.3~0.8초 랜덤 딜레이 → getBestMove → placeStoneByAI. boardRef/difficultyRef로 클로저 stale 방지. cleanup clearTimeout으로 메모리 누수 방지.
+- `src/App.jsx`: 두 훅 연결, 임시 인라인 UI 작성 (Phase 5에서 컴포넌트로 교체 예정).
+브라우저 동작 확인: 난이도 선택, 착수, AI 응수(딜레이), 마지막 수 마킹, 무르기(2수 취소) 모두 정상. npm run build 성공.

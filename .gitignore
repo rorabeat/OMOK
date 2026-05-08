@@ -1,0 +1,17 @@
+*
+!/.gitignore
+!/compare/
+!/compare/**
+!/memory-bank/
+!/memory-bank/**
+!/omok/
+!/omok/**
+
+# omok build artifacts & dependencies
+/omok/dist/
+/omok/node_modules/
+/omok/.claude/
+
+__pycache__/
+*.py[cod]
+/compare/__pycache__/
