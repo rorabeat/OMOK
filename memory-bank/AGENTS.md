@@ -112,3 +112,45 @@ omok/
 | 쉬움 | 휴리스틱 랜덤 | — |
 | 보통 | 미니맥스 | 3 |
 | 어려움 | 미니맥스 + 알파-베타 | 5 |
+
+---
+
+## 8. Git 워크플로우
+
+### 8-1. 브랜치 전략
+
+| 브랜치 | 용도 |
+|--------|------|
+| `omok-main` | 완성된 코드만 머지 (default branch) |
+| `feat/phase{N}-{설명}` | 각 Phase 구현용 피처 브랜치 |
+
+### 8-2. Phase 완료 시 필수 절차
+
+Phase 구현이 완료될 때마다 아래 순서를 반드시 따른다:
+
+1. **커밋** — 피처 브랜치에 구현 내용을 커밋한다.
+   ```
+   git add <변경 파일>
+   git commit -m "feat(phase{N}): <설명>"
+   ```
+
+2. **푸시** — 원격 저장소에 브랜치를 푸시한다.
+   ```
+   git push origin feat/phase{N}-{설명}
+   ```
+
+3. **PR 생성** — `feat/phase{N}` → `omok-main` 방향으로 Pull Request를 생성한다.
+   - PR 제목: `feat: Phase {N} — <설명>`
+   - PR 본문: 구현 내용 요약, 테스트 체크리스트 포함
+
+4. **progress.md 업데이트** — 해당 Phase를 완료 상태로 표시하고 다음 Phase 가이드를 작성한다.
+
+5. **history.md 업데이트** — 사용자 프롬프트와 AI 요약을 누적 기록한다.
+
+### 8-3. 저장소 정보
+
+| 항목 | 값 |
+|------|-----|
+| GitHub URL | https://github.com/rorabeat/OMOK |
+| Default branch | `omok-main` |
+| 피처 브랜치 네이밍 | `feat/phase{N}-{kebab-case-설명}` |
