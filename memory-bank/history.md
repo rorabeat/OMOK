@@ -119,3 +119,19 @@ Phase 4 완료 (2026-05-09). 구현 내용:
 - `src/hooks/useAI.js`: turn==='white' 감지 → 0.3~0.8초 랜덤 딜레이 → getBestMove → placeStoneByAI. boardRef/difficultyRef로 클로저 stale 방지. cleanup clearTimeout으로 메모리 누수 방지.
 - `src/App.jsx`: 두 훅 연결, 임시 인라인 UI 작성 (Phase 5에서 컴포넌트로 교체 예정).
 브라우저 동작 확인: 난이도 선택, 착수, AI 응수(딜레이), 마지막 수 마킹, 무르기(2수 취소) 모두 정상. npm run build 성공.
+
+---
+
+### [USER]
+현재까지 구현한 내용을 git 에 push 해줘 만일 저장소가 없다면 생성해줘 그리고 phase 가 변경될 때마다 commit, push, pr 을 진행해주고 이 내용을 agents.md 에 입력해줘
+
+### [AI 요약]
+GitHub 저장소 생성 및 Phase 1-4 전체 push 완료 (2026-05-09). 수행 작업:
+- GitHub REST API로 `rorabeat/OMOK` 저장소 신규 생성
+- 포트폴리오 레포 히스토리 오염 방지를 위해 orphan branch `omok-main` 생성
+- 3개 커밋 분리: docs(기획 문서), feat(Phase 1 scaffold), chore(gitignore + README)
+- `omok-main`을 default branch로 설정 (GitHub API)
+- `feat/phase1-4-implementation` 피처 브랜치 생성 및 push
+- AGENTS.md에 §8 Git 워크플로우 섹션 추가: 브랜치 전략, Phase 완료 시 commit→push→PR 절차, 저장소 정보
+- PR #1 생성: `feat/phase1-4-implementation` → `omok-main` (https://github.com/rorabeat/OMOK/pull/1)
+- `.gitignore` 화이트리스트 방식으로 수정: `omok/`, `memory-bank/` 포함, dist/node_modules 제외
