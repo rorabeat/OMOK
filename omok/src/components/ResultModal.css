@@ -97,6 +97,17 @@
   text-align: center;
 }
 
+.score-item--me {
+  border-color: #dcb468;
+  background: #2e2a1e;
+}
+
+.score-me-badge {
+  font-size: 12px;
+  color: #dcb468;
+  font-weight: normal;
+}
+
 @media (max-width: 480px) {
   .result-message {
     font-size: clamp(1.15rem, 5.5vw, 1.55rem);

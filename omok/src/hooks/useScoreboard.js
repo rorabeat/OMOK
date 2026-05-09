@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { normalizeName } from '../logic/scoreboard.js';
 import {
-  PLAYER_NAME_KEY,
-  SCOREBOARD_KEY,
-  formatScoreboardText,
-  getTopScores,
-  normalizeName,
-  parseScoreboardText,
-  recordScore,
-} from '../logic/scoreboard.js';
+  subscribeScoreboard,
+  recordScoreRemote,
+} from '../logic/firestoreScoreboard.js';
+
+const PLAYER_NAME_KEY = 'omok-player-name';
 
 function readStoredName() {
   if (typeof window === 'undefined') return '';
@@ -18,54 +16,40 @@ function readStoredName() {
   }
 }
 
-function readStoredScores() {
-  if (typeof window === 'undefined') return [];
-  try {
-    return parseScoreboardText(window.localStorage.getItem(SCOREBOARD_KEY));
-  } catch {
-    return [];
-  }
-}
-
 export function useScoreboard() {
   const [playerName, setPlayerNameState] = useState(readStoredName);
-  const [entries, setEntries] = useState(readStoredScores);
+  const [entries, setEntries] = useState([]);
 
+  // 이름을 localStorage에 유지
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      window.localStorage.setItem(PLAYER_NAME_KEY, playerName);
-    } catch {
-      // Storage can be unavailable in some privacy modes.
-    }
+    try { window.localStorage.setItem(PLAYER_NAME_KEY, playerName); } catch { /* noop */ }
   }, [playerName]);
 
+  // Firestore 실시간 구독 — 다른 플레이어가 점수를 올리면 자동 갱신
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      window.localStorage.setItem(SCOREBOARD_KEY, formatScoreboardText(entries));
-    } catch {
-      // Keep the in-memory score usable even when storage fails.
-    }
-  }, [entries]);
+    const unsubscribe = subscribeScoreboard(setEntries);
+    return unsubscribe;
+  }, []);
 
   const setPlayerName = useCallback((name) => {
     setPlayerNameState(normalizeName(name));
   }, []);
 
-  const addGameResult = useCallback((result) => {
-    setEntries(prev => recordScore(prev, playerName, result));
+  const addGameResult = useCallback(async (result) => {
+    try {
+      await recordScoreRemote(playerName, result);
+    } catch (err) {
+      console.error('점수 저장 실패:', err);
+    }
   }, [playerName]);
 
-  const topScores = useMemo(() => getTopScores(entries, 5), [entries]);
-  const scoreboardText = useMemo(() => formatScoreboardText(entries), [entries]);
+  const topScores = entries.slice(0, 5);
 
   return {
     playerName,
     setPlayerName,
     entries,
     topScores,
-    scoreboardText,
     addGameResult,
   };
 }
