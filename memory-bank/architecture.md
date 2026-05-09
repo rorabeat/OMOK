@@ -14,8 +14,12 @@
 │  (React 컴포넌트, 렌더링만 담당)                      │
 ├─────────────────────────────────────────────────────┤
 │                  Hook Layer                         │
-│  useGame.js  /  useAI.js                            │
-│  (React 상태 ↔ 순수 로직 연결 어댑터)                 │
+│  useGame.js  /  useAI.js  /  useScoreboard.js       │
+│  (React 상태 ↔ 순수 로직/서비스 연결 어댑터)           │
+├─────────────────────────────────────────────────────┤
+│                 Service Layer                       │
+│  logic/firebase.js  /  logic/firestoreScoreboard.js │
+│  (외부 서비스 연동, Firebase Firestore 추상화)         │
 ├─────────────────────────────────────────────────────┤
 │                 Logic Layer                         │
 │  logic/rules.js  /  logic/ai.js                     │
@@ -25,6 +29,13 @@
 │  constants/config.js                               │
 │  (매직 넘버 제거, 전체 레이어에서 공유)               │
 └─────────────────────────────────────────────────────┘
+
+        ┌────────────────────────────────────┐
+        │       외부 서비스 (Cloud)           │
+        │  Firebase Firestore (omok_scores)  │
+        └────────────────────────────────────┘
+                        ▲
+              Service Layer가 연결
 ```
 
 **핵심 원칙**: 아래 방향으로만 의존한다. Logic이 UI를 import하는 역방향 의존은 절대 금지.
@@ -58,6 +69,23 @@
 - `getBestMove(board, difficulty)` 하나의 공개 API만 노출. 내부 구현(탐색 깊이, 점수 테이블)은 은닉.
 - **왜 순수 함수인가?** AI 연산은 무겁다. 순수 함수로 유지하면 나중에 Web Worker로 오프로딩할 때 그대로 이전 가능.
 - 비동기 딜레이(0.3~0.8초)는 이 파일이 아닌 `useAI.js`에서 처리. 로직과 타이밍을 분리.
+
+### `src/logic/firebase.js`
+- Firebase 앱 초기화 모듈. `VITE_FIREBASE_*` 환경변수(Vite의 `import.meta.env`)로 Firebase config를 구성하고 Firestore 인스턴스 `db`를 export.
+- **왜 별도 파일인가?** Firebase 초기화 코드가 여러 곳에 흩어지면 중복 초기화 경고가 발생한다. 단일 모듈에서 한 번만 `initializeApp`하고 `db`를 공유.
+- **환경변수 방식**: 실제 키는 `.env.local`(gitignore)과 GitHub Secrets에만 존재. `import.meta.env.VITE_*`는 빌드 시 번들에 인라인됨.
+
+### `src/logic/firestoreScoreboard.js`
+- Firebase Firestore 기반 스코어보드 서비스 모듈. 두 가지 공개 함수만 노출:
+  - `subscribeScoreboard(onUpdate)`: `onSnapshot`으로 `omok_scores` 컬렉션을 실시간 구독. 변경 발생 시 점수 내림차순 정렬된 배열을 콜백에 전달. unsubscribe 함수 반환.
+  - `recordScoreRemote(playerName, result)`: `runTransaction`으로 동시성 안전하게 score/wins/draws/losses 누적. document ID = playerName (동일 플레이어 재방문 시 같은 문서 업데이트).
+- **왜 runTransaction인가?** 여러 플레이어가 동시에 게임을 마칠 경우 단순 read-modify-write는 레이스 컨디션으로 점수가 손실될 수 있다. Firestore 트랜잭션이 원자적 업데이트를 보장.
+
+### `src/hooks/useScoreboard.js`
+- Firestore 스코어보드 서비스를 React 상태와 연결하는 어댑터 훅.
+- `useEffect`에서 `subscribeScoreboard` 구독 → `topScores` 상태 업데이트 → cleanup에서 `unsubscribe()` 호출.
+- `addGameResult(result)` → `recordScoreRemote` 비동기 호출 (에러는 콘솔 경고만, UX 방해 안 함).
+- `playerName`은 `localStorage`에 유지 (재방문 시 이름 재입력 생략 목적).
 
 ### `src/hooks/useGame.js`
 - 게임의 **전체 상태 머신**: board, turn, gameStatus, history, forbiddenCells 등.
@@ -96,6 +124,7 @@
 
 ## 3. 데이터 흐름
 
+### 게임 착수 흐름
 ```
 사용자 클릭
     │
@@ -129,6 +158,34 @@ App → useGame.placeStone(row, col)
          board 상태 업데이트 → 리렌더
 ```
 
+### 스코어보드 흐름
+```
+게임 시작 (App 마운트)
+    │
+    ▼
+useScoreboard → subscribeScoreboard(onUpdate)
+    │                   │
+    │               Firestore onSnapshot
+    │                   │
+    │            omok_scores 컬렉션 변경 감지
+    │                   │
+    └── topScores 상태 업데이트 ──→ ResultModal 리렌더
+
+게임 종료 (win/draw)
+    │
+    ▼
+App.useEffect → addGameResult(result)
+    │
+    ▼
+recordScoreRemote(playerName, result)
+    │
+    ▼
+Firestore runTransaction → 점수 원자적 업데이트
+    │
+    ▼
+onSnapshot 트리거 → topScores 자동 갱신 → UI 반영
+```
+
 ---
 
 ## 4. 상태 설계 근거
@@ -147,5 +204,7 @@ App → useGame.placeStone(row, col)
 |------|-----------|
 | 온라인 대전 추가 | `useGame`의 `placeStone`을 WebSocket 이벤트와 연결. Logic Layer는 변경 불필요. |
 | AI 강화 (딥러닝) | `ai.js`의 `getBestMove` 시그니처를 유지하면 내부 구현만 교체 가능. |
-| 기보 저장/복기 | `history` 배열을 localStorage에 직렬화. 이미 구조화되어 있어 그대로 사용 가능. |
+| 기보 저장/복기 | `history` 배열을 Firestore에 직렬화 저장. `firestoreScoreboard.js`에 함수 추가로 구현 가능. |
 | Web Worker AI | `ai.js`가 순수 함수이므로 Worker 스크립트로 그대로 이전 가능. `useAI.js`의 setTimeout만 Worker 메시지로 교체. |
+| Firestore 보안 규칙 강화 | 현재 테스트 모드(전체 허용). 프로덕션 전환 시 Firebase Console에서 read/write 규칙 설정 필요. playerName 기반 document 쓰기 제한 검토. |
+| 플레이어 인증 | 현재 이름만으로 식별. Firebase Auth 도입 시 `firestoreScoreboard.js`의 document ID를 UID로 변경하고, `useScoreboard.js`에 Auth 상태 연동 추가. |
