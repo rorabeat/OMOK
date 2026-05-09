@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useGame } from './hooks/useGame.js';
 import { useAI } from './hooks/useAI.js';
 import Board from './components/Board.jsx';
@@ -8,6 +9,7 @@ import './index.css';
 
 export default function App() {
   const game = useGame();
+  const [showResult, setShowResult] = useState(false);
 
   useAI({
     turn: game.turn,
@@ -17,6 +19,15 @@ export default function App() {
     placeStoneByAI: game.placeStoneByAI,
   });
 
+  // 승패 결정 후 1.5초 뒤에 결과 모달 표시 (승리 돌을 먼저 보여주기 위해)
+  useEffect(() => {
+    if (game.gameStatus === 'win' || game.gameStatus === 'draw') {
+      const t = setTimeout(() => setShowResult(true), 1500);
+      return () => clearTimeout(t);
+    }
+    setShowResult(false);
+  }, [game.gameStatus]);
+
   return (
     <div className="app">
       <DifficultyModal
@@ -24,7 +35,7 @@ export default function App() {
         onSelect={game.selectDifficulty}
       />
       <ResultModal
-        visible={game.gameStatus === 'win' || game.gameStatus === 'draw'}
+        visible={showResult}
         gameStatus={game.gameStatus}
         winner={game.winner}
         onRestart={game.restartGame}

@@ -195,47 +195,17 @@ function checkDoubleThree(board, row, col) {
 
 /**
  * 특정 방향에서 열린 3을 만드는지 확인한다.
- * 열린 3: 양쪽 끝이 모두 비어 있는 3연속 (확장하면 열린 4 → 5목이 가능).
+ * 열린 3: 정확히 3연속이고 양쪽 끝이 모두 비어 있는 패턴.
+ * (간격 있는 3 패턴은 false positive가 많아 단순 연속 패턴만 검사한다)
  */
 function makesOpenThree(board, row, col, dr, dc) {
   const line = countLine(board, row, col, dr, dc, STONE.BLACK);
-  if (line !== 3) {
-    // 간격이 있는 열린 3 패턴도 확인
-    return hasGappedOpenThree(board, row, col, dr, dc);
-  }
+  if (line !== 3) return false;
   const fwd = countDirection(board, row, col, dr, dc, STONE.BLACK);
   const bwd = countDirection(board, row, col, -dr, -dc, STONE.BLACK);
   const fwdOpen = isCellOpen(board, row + (fwd + 1) * dr, col + (fwd + 1) * dc);
   const bwdOpen = isCellOpen(board, row - (bwd + 1) * dr, col - (bwd + 1) * dc);
   return fwdOpen && bwdOpen;
-}
-
-/**
- * 간격이 있는 열린 3 감지 (_X_XX_, _XX_X_ 등)
- * 재귀 없이 gap 위치에 돌을 가상으로 놓고 3연속 + 양끝 열림 여부만 직접 판단한다.
- */
-function hasGappedOpenThree(board, row, col, dr, dc) {
-  for (let k = -(WIN_COUNT - 1); k <= WIN_COUNT - 1; k++) {
-    if (k === 0) continue;
-    const tr = row + k * dr;
-    const tc = col + k * dc;
-    if (tr < 0 || tr >= BOARD_SIZE || tc < 0 || tc >= BOARD_SIZE) continue;
-    if (board[tr][tc] !== STONE.EMPTY) continue;
-
-    board[tr][tc] = STONE.BLACK;
-    const line = countLine(board, row, col, dr, dc, STONE.BLACK);
-    let result = false;
-    if (line === 3) {
-      const fwd = countDirection(board, row, col, dr, dc, STONE.BLACK);
-      const bwd = countDirection(board, row, col, -dr, -dc, STONE.BLACK);
-      const fwdOpen = isCellOpen(board, row + (fwd + 1) * dr, col + (fwd + 1) * dc);
-      const bwdOpen = isCellOpen(board, row - (bwd + 1) * dr, col - (bwd + 1) * dc);
-      result = fwdOpen && bwdOpen;
-    }
-    board[tr][tc] = STONE.EMPTY;
-    if (result) return true;
-  }
-  return false;
 }
 
 function isCellOpen(board, r, c) {
