@@ -77,9 +77,11 @@ body {
 }
 
 .app-title {
-  font-size: clamp(1.375rem, 4.5vw, 1.75rem);
-  letter-spacing: 0.15em;
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+  letter-spacing: 0.05em;
   color: #dcb468;
+  word-break: keep-all;
+  text-align: center;
 }
 
 .app-difficulty {
