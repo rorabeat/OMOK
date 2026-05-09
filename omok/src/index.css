@@ -1,8 +1,16 @@
 :root {
   --board-bg: #dcb468;
-  --line-color: #000;
+  --board-edge: #8b6914;
+  --line-color: #5a3e1b;
+  --surface-bg: #1e1e1e;
+  --panel-bg: #2a2a2a;
   --cell-size: 40px;
   --stone-size: 34px;
+  --mobile-chrome-offset: clamp(148px, 36svh, 240px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
   --color-black: #1a1a1a;
   --color-white: #f5f5f5;
   --color-forbidden: #e53935;
@@ -10,31 +18,136 @@
   --color-last-move: rgba(255, 0, 0, 0.5);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
 body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #1e1e1e;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035), transparent 28%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 4px),
+    var(--surface-bg);
   color: #f0f0f0;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-inline: calc(12px + var(--safe-left)) calc(12px + var(--safe-right));
+  padding-block: calc(10px + var(--safe-top)) calc(12px + var(--safe-bottom));
+  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  max-width: min(100vw, calc(var(--cell-size) * 16 + 80px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .app {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.app-header {
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: clamp(1.375rem, 4.5vw, 1.75rem);
   letter-spacing: 0.15em;
   color: #dcb468;
+}
+
+.app-difficulty {
+  margin-top: 4px;
+  font-size: clamp(13px, 3.8vw, 14px);
+  color: #9e9e9e;
+}
+
+/* 보드 바깥 패딩(16셀)·헤더·상태바를 고려해 셀 크기 맞춤 */
+.board-shell {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --avail-board-w: calc(
+      100vw - 24px - var(--safe-left) - var(--safe-right)
+    );
+    --avail-board-h: calc(
+      100dvh - var(--mobile-chrome-offset) - var(--safe-top) -
+        var(--safe-bottom)
+    );
+    --cell-size: clamp(
+      20px,
+      min(
+        calc(var(--avail-board-w) / 16),
+        calc(max(200px, var(--avail-board-h)) / 16)
+      ),
+      40px
+    );
+    --stone-size: calc(var(--cell-size) * 0.85);
+  }
+
+  body {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .app {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --mobile-chrome-offset: clamp(138px, 34svh, 260px);
+  }
+}
+
+@media (max-width: 340px) {
+  :root {
+    --cell-size: clamp(18px, calc(var(--avail-board-w) / 16), 32px);
+    --stone-size: calc(var(--cell-size) * 0.84);
+  }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  :root {
+    --mobile-chrome-offset: clamp(108px, 26svh, 200px);
+  }
+}
+
+@media (min-width: 769px) {
+  .board-shell {
+    max-width: 100%;
+  }
 }
