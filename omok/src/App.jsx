@@ -21,7 +21,6 @@ export default function App() {
     playerName,
     setPlayerName,
     topScores,
-    scoreboardText,
     addGameResult,
   } = useScoreboard();
   const [showResult, setShowResult] = useState(false);
@@ -68,7 +67,6 @@ export default function App() {
         winner={game.winner}
         playerName={playerName}
         topScores={topScores}
-        scoreboardText={scoreboardText}
         onRestart={game.restartGame}
         onChangeDifficulty={game.changeDifficulty}
       />
