@@ -71,7 +71,7 @@ export default function App() {
         onChangeDifficulty={game.changeDifficulty}
       />
       <header className="app-header">
-        <h1 className="app-title">OMOK</h1>
+        <h1 className="app-title">채원채아 오목게임</h1>
         {game.gameStatus !== 'idle' && (
           <p className="app-difficulty">난이도: {DIFF_LABELS[game.difficulty]}</p>
         )}

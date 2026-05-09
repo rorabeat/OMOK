@@ -14,7 +14,7 @@ export default function DifficultyModal({ visible, playerName, onNameChange, onS
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2 className="modal-title">OMOK</h2>
+        <h2 className="modal-title">채원채아 오목게임</h2>
         <label className="player-name-field">
           <span className="player-name-label">플레이어 이름</span>
           <input
