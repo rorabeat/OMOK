@@ -1,1 +1,81 @@
-/* Phase 6에서 구현 */
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  position: relative;
+  cursor: default;
+}
+
+.cell.placeable {
+  cursor: pointer;
+}
+
+.line-h {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #5a3e1b;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+.line-h.edge-left  { left: 50%; }
+.line-h.edge-right { right: 50%; }
+
+.line-v {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #5a3e1b;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.line-v.edge-top    { top: 50%; }
+.line-v.edge-bottom { bottom: 50%; }
+
+.star-point {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5a3e1b;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.stone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--stone-size);
+  height: var(--stone-size);
+  border-radius: 50%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.stone-black {
+  background: radial-gradient(circle at 35% 35%, #666, #111);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.stone-white {
+  background: radial-gradient(circle at 35% 35%, #fff, #ccc);
+  border: 1.5px solid #aaa;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.stone.last-move {
+  box-shadow: 0 0 0 3px rgba(220, 50, 50, 0.8), 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.stone.win-cell {
+  outline: 3px solid #f9a825;
+  outline-offset: 1px;
+}

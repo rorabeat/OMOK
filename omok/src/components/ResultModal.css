@@ -1,1 +1,10 @@
-/* Phase 6에서 구현 */
+.result-modal {
+  gap: 28px;
+}
+
+.result-message {
+  font-size: 26px;
+  font-weight: bold;
+  color: #dcb468;
+  text-align: center;
+}

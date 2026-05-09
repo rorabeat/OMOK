@@ -1,1 +1,8 @@
-/* Phase 6에서 구현 */
+.board {
+  display: grid;
+  grid-template-columns: repeat(15, var(--cell-size));
+  background: var(--board-bg);
+  padding: calc(var(--cell-size) / 2);
+  border: 2px solid #8b6914;
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.6);
+}

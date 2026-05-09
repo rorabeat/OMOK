@@ -32,3 +32,9 @@ body {
   align-items: center;
   gap: 16px;
 }
+
+.app-title {
+  font-size: 28px;
+  letter-spacing: 0.15em;
+  color: #dcb468;
+}
