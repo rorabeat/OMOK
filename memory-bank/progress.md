@@ -9,10 +9,12 @@
 
 | 항목 | 상태 |
 |------|------|
-| 마지막 완료 Phase | **Phase 4** |
-| 다음 작업 | **Phase 5** — UI 컴포넌트 구현 (Board / Cell / StatusBar / DifficultyModal / ResultModal) |
+| 마지막 완료 Phase | **Phase 6 & 7** (스타일링 + 테스트 + 스코어보드) |
+| 다음 작업 | 없음 — 구현 완료. 배포(GitHub Pages 등) 또는 기능 확장 선택 가능 |
 | 빌드 상태 | ✅ 정상 (`npm run build` 통과) |
+| 테스트 상태 | ✅ 20 tests passed (rules 10 + ai 7 + scoreboard 3) |
 | 실행 방법 | `cd omok && npm install && npm run dev` |
+| 단위 테스트 | `npm run test:run` (Vitest), `npm test`(watch) |
 
 ---
 
@@ -126,27 +128,72 @@
 
 ---
 
-## Phase 5 — UI 컴포넌트 ⏳ 미완료
+## Phase 5 — UI 컴포넌트 ✅ (2026-05-09 완료)
 
-### 다음 작업자가 할 일
+### 완료된 작업
 
-1. `Board.jsx` — 15×15 CSS Grid, `<Cell>` 225개 렌더링
-2. `Cell.jsx` — 교차점 한 칸. stone/lastMove/winCell/forbidden 상태별 클래스 분기. `React.memo` 적용
-3. `StatusBar.jsx` — 차례 표시, AI 스피너, 무르기/재시작 버튼
-4. `DifficultyModal.jsx` — 쉬움/보통/어려움 선택 모달
-5. `ResultModal.jsx` — 승패/무승부 결과 모달, 다시 하기 / 난이도 변경
-6. `App.jsx` — 임시 인라인 UI를 위 컴포넌트로 교체
+- [x] `Cell.jsx` — 교차점 컴포넌트. React.memo 적용. 가로/세로선(edge 클리핑), 화점, 돌, 마지막 수 링, 승리 강조 렌더링
+- [x] `Cell.css` — CSS 변수 기반 스타일. `.stone-black`, `.stone-white`, `.last-move`, `.win-cell`
+- [x] `Board.jsx` — 15×15 CSS Grid, STAR_SET으로 화점 위치 관리, winSet으로 승리 교차점 판단
+- [x] `Board.css` — CSS Grid + board-bg 변수
+- [x] `StatusBar.jsx` — 플레이어/AI 차례 텍스트, AI 생각 중 표시, 무르기/재시작/난이도변경 버튼
+- [x] `StatusBar.css` — `.btn`, `.btn:disabled` 스타일
+- [x] `DifficultyModal.jsx` — 오버레이 모달, 쉬움/보통/어려움 버튼
+- [x] `DifficultyModal.css` — 다크 모달, 호버 시 골드 강조
+- [x] `ResultModal.jsx` — 승패/무승부 메시지, 다시 하기/난이도 변경
+- [x] `ResultModal.css` — result-modal, result-message
+- [x] `App.jsx` — 임시 인라인 UI 제거, 5개 컴포넌트로 교체
+- [x] `index.css` — `.app-title` 추가
+- [x] `npm run build` 성공
+- [x] PR #2 생성: `feat/phase5-ui-components` → `omok-main`
 
-> 세부 설계는 `implementation-plan.md` Phase 5 섹션 참고
+### 주요 결정 사항
+
+- **Cell에 React.memo 적용**: 225개 Cell이 매 착수마다 전체 재렌더되는 것을 방지. 변경된 교차점만 리렌더.
+- **STAR_SET을 Set으로 관리**: Board 렌더 시마다 배열 순회 대신 O(1) 조회
+- **winCells를 Set으로 변환**: `${r}-${c}` 문자열 키로 O(1) 조회
+- **금수 표시 제거**: 사용자 요청으로 빨간 원 렌더링 삭제. isForbid 로직(착수 방지)은 useGame에서 유지
 
 ---
 
-## Phase 6 — 스타일링 ⏳ 미완료
+## Phase 6 — 스타일링 ✅ (2026-05-09 완료)
 
-> Phase 5 완료 후 진행. `implementation-plan.md` Phase 6 섹션 참고.
+### 완료된 작업
+
+- [x] `index.css`: CSS 변수 보강(보드 테두리·격자선·패널 색 토큰), 모바일 뷰포트 연동 `--cell-size clamp`, `safe-area-inset`, `overscroll-behavior`
+- [x] `Board.css`: 나무결 레이어드 배경, `aspect-ratio 1`, `touch-action: manipulation`
+- [x] `Cell.css`: 격자선 CSS 변수 통일, 흑/백돌 질감 그라디언트, 금수 X 마커, 반응형 stone 크기, 키보드 포커스 링
+- [x] `Cell.jsx`: `onTouchStart` 터치 착수, `onKeyDown` Enter/Space 착수, `tabIndex`/`role="button"`
+- [x] `StatusBar.css`: 모바일 세로 버튼 레이아웃, `.ai-spinner` 회전 애니메이션
+- [x] `DifficultyModal.css` / `ResultModal.css`: 좁은 화면 패딩·버튼 배치, 안전 영역 padding
+
+### 추가 기능 — 플레이어 이름 & 스코어보드
+
+- [x] 시작 모달에서 이름 입력 → 난이도 선택 flow (이름 없으면 버튼 비활성)
+- [x] 게임 종료 시 점수 누적 (승리: 10점, 무승부: 1점, 패배: 0점)
+- [x] `localStorage` txt 포맷 영속화
+- [x] 결과 모달에 상위 5명 점수판 + TXT 저장 버튼
+- [x] `scoreboard.js`, `useScoreboard.js`, `scoreboard.test.js` 추가
+
+### 검증
+
+- [x] `npm run test:run` 통과: 3개 파일, 20개 테스트
+- [x] `npm run build` 통과
+- [x] `npm run lint` 통과
 
 ---
 
-## Phase 7 — 통합 테스트 ⏳ 미완료
+## Phase 7 — 통합 테스트 ✅ (2026-05-09 완료)
 
-> Phase 6 완료 후 진행. `implementation-plan.md` Phase 7 체크리스트 활용.
+### 완료된 작업
+
+- [x] `vitest` 도입 (`vite.config.js` `test.globals`, `test.environment` 설정)
+- [x] `rules.test.js`: 승리·금수(33/44/장목) 검증 10 케이스
+- [x] `ai.test.js`: 즉시 승리·차단·보통 난이도 7 케이스
+- [x] `scoreboard.test.js`: 점수 계산·직렬화 3 케이스
+- [x] **총 20 tests passed** (0 failed)
+- [x] 게임 흐름 수동 검증: 착수→AI 응수, 무르기, 재시작, 금수 차단, 결과 모달
+
+### 주요 결정 사항
+
+- **gameId로 중복 기록 방지**: `recordedGameRef.current === game.gameId` 체크로 같은 게임이 두 번 집계되지 않도록 처리

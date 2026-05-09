@@ -135,3 +135,27 @@ GitHub 저장소 생성 및 Phase 1-4 전체 push 완료 (2026-05-09). 수행 �
 - AGENTS.md에 §8 Git 워크플로우 섹션 추가: 브랜치 전략, Phase 완료 시 commit→push→PR 절차, 저장소 정보
 - PR #1 생성: `feat/phase1-4-implementation` → `omok-main` (https://github.com/rorabeat/OMOK/pull/1)
 - `.gitignore` 화이트리스트 방식으로 수정: `omok/`, `memory-bank/` 포함, dist/node_modules 제외
+
+---
+
+### [USER]
+빨간색 동그라미는 표시하지마
+
+### [AI 요약]
+App.jsx에서 금수 표시(빨간 원) 렌더링 블록 제거. isForbid 로직(착수 방지)은 useGame.js에서 유지 — 금수 위치에 돌을 놓을 수 없는 규칙은 그대로 적용됨.
+
+---
+
+### [USER]
+다음 phase 진행해줘
+
+### [AI 요약]
+Phase 5 완료 (2026-05-09). UI 컴포넌트 구현:
+- `Cell.jsx`: React.memo 적용. 교차점 가로/세로선(edge 클리핑), 화점, 돌(흑/백 그라디언트), 마지막 수 링, 승리 금색 강조
+- `Board.jsx`: 15×15 CSS Grid, STAR_SET(Set) 화점 관리, winSet O(1) 조회
+- `StatusBar.jsx`: 플레이어/AI 차례 표시, 무르기/재시작/난이도변경 버튼
+- `DifficultyModal.jsx`: 오버레이 모달, 쉬움/보통/어려움 버튼 (호버 시 골드 강조)
+- `ResultModal.jsx`: 승패/무승부 결과 메시지 + 다시 하기/난이도 변경
+- `App.jsx`: 임시 인라인 UI 제거, 5개 컴포넌트로 교체
+브라우저 동작 확인: DifficultyModal 표시, 난이도 선택 후 게임 시작, 착수/AI 응수, 마지막 수 링 모두 정상.
+PR #2 생성: `feat/phase5-ui-components` → `omok-main` (https://github.com/rorabeat/OMOK/pull/2)

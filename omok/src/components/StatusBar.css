@@ -1,1 +1,83 @@
-/* Phase 6에서 구현 */
+.status-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding-bottom: max(2px, env(safe-area-inset-bottom, 0px));
+}
+
+.status-text {
+  font-size: 15px;
+  min-height: 22px;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #555;
+  border-top-color: #dcb468;
+  border-radius: 50%;
+  animation: ai-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.status-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #333;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  border-radius: 4px;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 40px;
+}
+
+.btn:hover:not(:disabled) {
+  background: #444;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .status-text {
+    font-size: clamp(14px, 3.9vw, 15px);
+    text-align: center;
+    padding-inline: 4px;
+  }
+
+  .status-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 280px;
+    gap: 8px;
+  }
+
+  .btn {
+    width: 100%;
+    min-height: 44px;
+    font-size: 15px;
+  }
+}

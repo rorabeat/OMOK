@@ -1,1 +1,117 @@
-/* Phase 6에서 구현 */
+.result-modal {
+  gap: 22px;
+  width: min(430px, 100%);
+}
+
+.result-message {
+  font-size: 26px;
+  font-weight: bold;
+  color: #dcb468;
+  text-align: center;
+  line-height: 1.35;
+  padding-inline: 4px;
+}
+
+.scoreboard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scoreboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  color: #cfcfcf;
+}
+
+.score-download-btn {
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #333;
+  color: #f0f0f0;
+  min-height: 34px;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.score-download-btn:hover {
+  border-color: #dcb468;
+  color: #dcb468;
+}
+
+.score-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  max-height: min(300px, 42dvh);
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.score-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #242424;
+}
+
+.score-rank {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #dcb468;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.score-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score-value {
+  font-weight: 700;
+  color: #f2d28d;
+}
+
+.score-empty {
+  color: #aaa;
+  font-size: 14px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .result-message {
+    font-size: clamp(1.15rem, 5.5vw, 1.55rem);
+  }
+
+  .result-modal {
+    gap: 16px;
+  }
+
+  .scoreboard-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .score-download-btn {
+    width: 100%;
+  }
+}

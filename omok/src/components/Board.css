@@ -1,1 +1,21 @@
-/* Phase 6에서 구현 */
+.board {
+  display: grid;
+  grid-template-columns: repeat(15, var(--cell-size));
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12), transparent 22%, rgba(91, 54, 12, 0.12) 74%),
+    repeating-linear-gradient(8deg, rgba(99, 57, 14, 0.13) 0 2px, transparent 2px 12px),
+    repeating-linear-gradient(92deg, rgba(255, 239, 178, 0.12) 0 1px, transparent 1px 18px),
+    var(--board-bg);
+  padding: calc(var(--cell-size) / 2);
+  border: 2px solid var(--board-edge);
+  border-radius: 6px;
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 1px rgba(255, 240, 188, 0.28),
+    inset 0 0 24px rgba(91, 54, 12, 0.2);
+  max-inline-size: 100%;
+  aspect-ratio: 1;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}

@@ -19,6 +19,7 @@ const INITIAL_STATE = {
   forbiddenCells: [],       // 흑 금수 좌표 배열
   lastMove: null,           // 마지막 착수 좌표 { row, col }
   isAIThinking: false,
+  gameId: 0,
 };
 
 export function useGame() {
@@ -87,13 +88,14 @@ export function useGame() {
   /** 난이도 선택 후 게임 시작 */
   const selectDifficulty = useCallback((level) => {
     const board = createBoard();
-    setState({
+    setState(prev => ({
       ...INITIAL_STATE,
       board,
       difficulty: level,
       gameStatus: 'playing',
       forbiddenCells: [],
-    });
+      gameId: prev.gameId + 1,
+    }));
   }, []);
 
   /** 플레이어(흑) 착수 */
@@ -151,13 +153,14 @@ export function useGame() {
         difficulty: prev.difficulty,
         gameStatus: 'playing',
         forbiddenCells: [],
+        gameId: prev.gameId + 1,
       };
     });
   }, []);
 
   /** 난이도 변경 모달로 돌아가기 */
   const changeDifficulty = useCallback(() => {
-    setState({ ...INITIAL_STATE, board: createBoard() });
+    setState(prev => ({ ...INITIAL_STATE, board: createBoard(), gameId: prev.gameId }));
   }, []);
 
   return {
