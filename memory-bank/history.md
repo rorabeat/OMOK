@@ -159,3 +159,63 @@ Phase 5 완료 (2026-05-09). UI 컴포넌트 구현:
 - `App.jsx`: 임시 인라인 UI 제거, 5개 컴포넌트로 교체
 브라우저 동작 확인: DifficultyModal 표시, 난이도 선택 후 게임 시작, 착수/AI 응수, 마지막 수 링 모두 정상.
 PR #2 생성: `feat/phase5-ui-components` → `omok-main` (https://github.com/rorabeat/OMOK/pull/2)
+
+---
+
+## 2026-05-09 (이어서)
+
+---
+
+### [USER]
+agents.md 파일과 memory-bank 확인하고 구현이 완성되었는지 확인후 안되어 있으면 이어서 진행해줘
+
+### [AI 요약]
+memory-bank 및 AGENTS.md 전체 검토 후 Phase 6(스타일링), Phase 7(통합 테스트) 미완료 확인. 두 Phase 연속 완료.
+Phase 6: CSS 변수 보강, 반응형 모바일 clamp, touch-action, 플레이어 이름 입력 flow, localStorage 스코어보드, `scoreboard.js` / `useScoreboard.js` 신규 추가.
+Phase 7: Vitest 도입, `rules.test.js`(10) + `ai.test.js`(7) + `scoreboard.test.js`(3) = 총 20 tests passed.
+PR #3 생성: `feat/phase5-ui-components` → `omok-main` (https://github.com/rorabeat/OMOK/pull/3) — Phase 6+7 전체 포함.
+
+---
+
+### [USER]
+실행해 봤더니 게임이 완료되고 나서 txt 저장이라는 버튼이 있고 이걸 누르니 local 에 저장되는것 같다. 내 목표는 이 프로그램을 git hub web 서비스로 동작시켜서 다른 사람들도 같이 하는거지 그렇게 할려면 서버의 txt 파일에 저장이 되어야 해 그렇게 되도록 수정해줘
+
+### [AI 요약]
+localStorage 기반 스코어보드를 Firebase Firestore 실시간 공유 스코어보드로 완전 교체.
+신규 파일:
+- `src/logic/firebase.js`: `VITE_FIREBASE_*` 환경변수로 Firebase 앱 초기화, Firestore `db` export
+- `src/logic/firestoreScoreboard.js`: `subscribeScoreboard` (onSnapshot 실시간 구독) + `recordScoreRemote` (runTransaction 동시성 안전 쓰기)
+변경 파일:
+- `src/hooks/useScoreboard.js`: localStorage 점수 제거 → Firestore 실시간 구독/쓰기로 교체
+- `src/components/ResultModal.jsx`: TXT 저장 버튼 제거, "🌐 전체 순위 (실시간)" 추가, 현재 플레이어 금색 강조
+- `src/components/ResultModal.css`: `.score-item--me`, `.score-me-badge` 추가
+- `omok/.env.example`: 6개 VITE_FIREBASE_* 변수 템플릿 생성
+GitHub Pages 자동 배포:
+- `omok/vite.config.js`: `base: '/OMOK/'` (production)
+- `.github/workflows/deploy.yml`: omok-main push 트리거 → npm ci → build (Firebase Secrets 주입) → gh-pages 배포
+- `.gitignore`: `!/.github/` 예외 추가
+
+---
+
+### [USER]
+제목은 채원채아 오목게임으로 변경해줘
+
+### [AI 요약]
+게임 타이틀 전체 "채원채아 오목게임"으로 변경:
+- `omok/index.html`: `<title>채원채아 오목게임</title>`
+- `src/components/DifficultyModal.jsx`: 모달 h2 타이틀 변경
+- `src/App.jsx`: h1 앱 타이틀 변경
+- `src/index.css`: `.app-title` 반응형 폰트 clamp 조정
+- `src/components/DifficultyModal.css`: 모달 타이틀 폰트 크기 조정
+PR #4 생성: 타이틀 변경 커밋 → `omok-main` (https://github.com/rorabeat/OMOK/pull/4)
+
+---
+
+### [USER]
+현재까지 진행한 내용이 memory-bank 파일들에 반영이 안된것 같다 확인해서 모두 반영해줘
+
+### [AI 요약]
+memory-bank 3개 파일 전체 업데이트:
+- `progress.md`: Phase 8 섹션 추가 (Firebase Firestore, GitHub Pages, 타이틀 변경, PR #3/#4 이력, 사용자 액션 가이드)
+- `history.md`: 2026-05-09 세션 전체 이력 추가 (Phase 6+7 완료, Firebase 교체, 타이틀 변경)
+- `architecture.md`: Service Layer 추가 (Hook Layer와 Logic Layer 사이), firebase.js / firestoreScoreboard.js / useScoreboard.js 설계 근거, 데이터 흐름 업데이트, 확장성 테이블 업데이트

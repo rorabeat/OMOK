@@ -9,12 +9,14 @@
 
 | 항목 | 상태 |
 |------|------|
-| 마지막 완료 Phase | **Phase 6 & 7** (스타일링 + 테스트 + 스코어보드) |
-| 다음 작업 | 없음 — 구현 완료. 배포(GitHub Pages 등) 또는 기능 확장 선택 가능 |
+| 마지막 완료 | **Firebase 공유 스코어보드 + GitHub Pages 배포 + 타이틀 변경** |
+| 다음 작업 | Firebase Secrets 등록 후 PR #4 머지 → GitHub Pages 자동 배포 |
 | 빌드 상태 | ✅ 정상 (`npm run build` 통과) |
 | 테스트 상태 | ✅ 20 tests passed (rules 10 + ai 7 + scoreboard 3) |
-| 실행 방법 | `cd omok && npm install && npm run dev` |
+| 서비스 URL | `https://rorabeat.github.io/OMOK/` (PR #3 머지 후 배포됨) |
+| 실행 방법 | `cd omok && cp .env.example .env.local` → 값 입력 → `npm install && npm run dev` |
 | 단위 테스트 | `npm run test:run` (Vitest), `npm test`(watch) |
+| 오픈 PR | PR #4: 타이틀 변경 (`feat/phase5-ui-components` → `omok-main`) |
 
 ---
 
@@ -197,3 +199,72 @@
 ### 주요 결정 사항
 
 - **gameId로 중복 기록 방지**: `recordedGameRef.current === game.gameId` 체크로 같은 게임이 두 번 집계되지 않도록 처리
+
+---
+
+## Phase 8 — Firebase 공유 스코어보드 & GitHub Pages 배포 & 타이틀 변경 ✅ (2026-05-09 완료)
+
+### 완료된 작업
+
+#### Firebase Firestore 공유 스코어보드
+- [x] `npm install firebase` — Firebase 12 SDK 설치
+- [x] `src/logic/firebase.js` 신규 생성 — `VITE_FIREBASE_*` 환경변수로 앱 초기화, `db` (Firestore) export
+- [x] `src/logic/firestoreScoreboard.js` 신규 생성:
+  - `subscribeScoreboard(onUpdate)` — `onSnapshot`으로 `omok_scores` 컬렉션 실시간 구독; 변경 시 정렬된 배열 콜백
+  - `recordScoreRemote(playerName, result)` — `runTransaction`으로 동시성 안전 점수 누적 (score/wins/draws/losses)
+- [x] `src/hooks/useScoreboard.js` 전면 교체:
+  - localStorage 점수 저장 완전 제거 (이름만 localStorage 유지)
+  - `subscribeScoreboard` 실시간 구독으로 `topScores` 상태 유지
+  - `addGameResult` → `recordScoreRemote` 비동기 호출 (에러 catch 포함)
+  - `scoreboardText` / TXT 다운로드 기능 제거
+- [x] `src/components/ResultModal.jsx` 업데이트:
+  - TXT 저장 버튼 제거
+  - "🌐 전체 순위 (실시간)" 헤더 추가
+  - 현재 플레이어 행 금색 강조 (`.score-item--me`) + `(나)` 뱃지
+- [x] `src/components/ResultModal.css` 업데이트:
+  - `.score-item--me { border-color: #dcb468; background: #2e2a1e; }`
+  - `.score-me-badge { font-size: 12px; color: #dcb468; }`
+- [x] `omok/.env.example` 신규 생성 — 6개 `VITE_FIREBASE_*` 변수 템플릿
+
+#### GitHub Pages 자동 배포
+- [x] `omok/vite.config.js` 업데이트 — `base: process.env.NODE_ENV === 'production' ? '/OMOK/' : '/'`
+- [x] `npm install --save-dev gh-pages` 설치
+- [x] `omok/package.json` 업데이트 — `"deploy"` 스크립트, `firebase`/`gh-pages` 의존성 추가
+- [x] `.github/workflows/deploy.yml` 신규 생성:
+  - `omok-main` 브랜치 push 트리거
+  - `omok/` 디렉터리에서 `npm ci` → `npm run build` (6개 Firebase Secret 주입)
+  - `peaceiris/actions-gh-pages@v4`로 `omok/dist` 배포
+- [x] `.gitignore` 수정 — `!/.github/` 및 `!/.github/**` 예외 추가 (워크플로우 파일 추적)
+
+#### 타이틀 변경
+- [x] `omok/index.html` — `<title>채원채아 오목게임</title>`
+- [x] `src/components/DifficultyModal.jsx` — 모달 타이틀 "채원채아 오목게임"
+- [x] `src/App.jsx` — `<h1>채원채아 오목게임</h1>`
+- [x] `src/index.css` — `.app-title` 반응형 폰트 크기 조정 (`clamp(1.1rem, 4vw, 1.6rem)`)
+- [x] `src/components/DifficultyModal.css` — 모달 타이틀 폰트 크기 조정
+
+### PR 이력
+- PR #3: Phase 6 스타일링 + Phase 7 테스트 + Firebase + GitHub Pages → `omok-main` (머지 완료)
+- PR #4: 타이틀 변경 (`채원채아 오목게임`) → `omok-main` (머지 대기 중)
+
+### 사용자 액션 필요
+1. **Firebase 프로젝트 생성**:
+   - https://console.firebase.google.com → 새 프로젝트
+   - Firestore Database 활성화 (테스트 모드)
+   - 웹 앱 등록 후 6개 config 값 복사
+2. **GitHub Secrets 등록** (`rorabeat/OMOK` → Settings → Secrets → Actions):
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+3. **PR #4 머지** → GitHub Actions가 자동 빌드·배포 실행
+
+### 주요 결정 사항
+
+- **Firestore 문서 ID = 플레이어 이름**: 동일 플레이어가 재접속 시 같은 문서에 누적. 이름 충돌 가능성은 사용 규모상 문제없음.
+- **runTransaction 사용**: 여러 플레이어가 동시에 게임을 마칠 경우 점수 손실 방지
+- **localStorage 이름만 유지**: 재방문 시 이름 재입력 생략 (편의성). 점수는 Firestore에서 로드.
+- **onSnapshot 실시간 구독**: `useEffect` cleanup에서 `unsubscribe()` 호출로 메모리 누수 방지
+- **GitHub Actions Secret 주입**: `.env.local`은 gitignore; 빌드 시 CI가 Secret으로 주입하여 클라이언트 번들에 포함
